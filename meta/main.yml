@@ -1,0 +1,17 @@
+galaxy_info:
+  role_name: percona_mysql
+  author: MethorZ
+  description: Ansible percona mysql support for Debian
+  company: MethorZ
+  license: license (BSD, MIT)
+  min_ansible_version: 2.5
+  platforms:
+    - name: Debian
+      versions:
+        - all
+  galaxy_tags:
+    - development
+    - percona
+    - mysql
+
+dependencies: []
