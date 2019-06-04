@@ -1,1 +1,12 @@
 ---
+##
+# Beware: handlers are executed in the order they are written in this file, when executing multiple handlers
+##
+- name: daemon reload
+  systemd:
+    daemon_reload: yes
+
+- name: restart mysql
+  service:
+    name: mysql
+    state: restarted

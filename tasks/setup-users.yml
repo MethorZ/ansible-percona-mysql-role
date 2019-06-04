@@ -1,0 +1,16 @@
+---
+##
+# Setup users and privileges for the databases
+##
+- name: MYSQL_USER | Create / remove MySQL users
+  mysql_user:
+    name: "{{ item.name }}"
+    host: "{{ item.host | default('localhost') }}"
+    password: "{{ item.password }}"
+    priv: "{{ item.priv | default('*.*:USAGE') }}"
+    state: "{{ item.state | default('present') }}"
+    append_privs: "{{ item.append_privs | default('no') }}"
+    encrypted: "{{ item.encrypted | default('no') }}"
+    login_user: root
+    login_password: "{{ percona_mysql_root_password }}"
+  with_items: "{{ percona_mysql_users }}"

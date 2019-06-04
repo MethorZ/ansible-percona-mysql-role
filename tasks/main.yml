@@ -1,1 +1,41 @@
 ---
+##
+# Setup Percona MySQL database
+##
+
+##
+# Import variable definitions and defaults
+##
+- name: IMPORT_TASKS | Setup Variable definitions / defaults
+  import_tasks: setup-variables.yml
+
+##
+# Setup the OS based on family
+##
+- name: IMPORT_TASKS | Setup percona mysql for OS
+  import_tasks: "setup-Debian.yml"
+  when:
+    - ansible_facts['os_family'] == 'Debian'
+
+- name: IMPORT_TASKS | Setup jemalloc
+  import_tasks: "setup-jemalloc.yml"
+  when:
+    - ansible_facts['os_family'] == 'Debian'
+
+##
+# Configuration and setup
+##
+- name: IMPORT_TASKS | Configure percona mysql
+  import_tasks: "configure-mysql.yml"
+
+- name: IMPORT_TASKS | Configure root usage and my.cnf shortcut
+  import_tasks: "configure-root.yml"
+
+- name: IMPORT_TASKS | Secure percona mysql database
+  import_tasks: "secure-database.yml"
+
+- name: IMPORT_TASKS | Setup databases
+  import_tasks: "setup-databases.yml"
+
+- name: IMPORT_TASKS | Setup databases
+  import_tasks: "setup-users.yml"

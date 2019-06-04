@@ -1,0 +1,66 @@
+---
+##
+# Percona MySQL server configuration
+##
+percona_mysql_enabled: false
+percona_mysql_version: 5.7
+
+# Enable jemalloc (and disable transparent huge pages)
+percona_mysql_jemalloc_enabled: true
+
+##
+# Package configuration
+##
+percona_mysql_packages_mode: latest
+percona_mysql_toolkit_enabled: true
+
+##
+# File and directory path configuration
+##
+
+# Local directory used for temporary files
+percona_mysql_local_temp_dir: /tmp
+percona_mysql_root_my_cnf_file: /root/.my.cnf
+
+##
+# Default user configuration
+##
+
+# Always overwrites existing password when provided
+percona_mysql_root_password: ''
+
+# Triggers automatic renewal of root password
+percona_mysql_renew_existing_password: false
+
+# Creates a file containing the current root password on server
+percona_mysql_create_root_passwd_file: true
+percona_mysql_root_passwd_file: /root/.mysql_passwd
+
+# Create a read only user for security purposes
+percona_mysql_read_only_user_enabled: true
+percona_mysql_read_only_user: root-ro
+percona_mysql_read_only_user_priv: "*.*:SELECT"
+
+##
+# Database and user / access configuration
+##
+
+# Databases to manage
+percona_mysql_databases: []
+#  - name: example_database
+#    collation: utf8_bin
+#    encoding: utf8
+#    state: present
+
+# Users to manage
+percona_mysql_users: []
+#  - name: example_user
+#    host: localhost
+#    password: my_password
+#    priv: "*.example_database:USAGE"
+#    append_privs: no
+#    encrypted: no
+#    state: present
+
+
+

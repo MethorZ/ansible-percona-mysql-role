@@ -1,0 +1,35 @@
+---
+#
+# Setup all required packages
+#
+- block:
+  - name: APT | Make sure jemalloc package is installed (if configured)
+    apt:
+      name: "{{ percona_mysql_jemalloc_package }}"
+      state: "{{ percona_mysql_packages_mode }}"
+    when: percona_mysql_jemalloc_enabled
+
+  - name: COPY | Copy service for disabling huge pages
+    copy:
+      src: disable-transparent-hugepages.service
+      dest: /etc/systemd/system/disable-transparent-hugepages.service
+      owner: root
+      group: root
+      mode: 0755
+
+  - name: SYSTEMD | Reload daemon now
+    systemd:
+      daemon_reload: yes
+    changed_when: False
+
+  - name: SYSTEMD | Enable and start the huge page disabling service
+    systemd:
+      name: disable-transparent-hugepages
+      enabled: yes
+      state: started
+
+  when:
+    - percona_mysql_enabled
+    - percona_mysql_jemalloc_enabled
+
+

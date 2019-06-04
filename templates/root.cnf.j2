@@ -1,0 +1,10 @@
+##
+# Ansible managed file - DO NOT EDIT!
+##
+[mysql]
+prompt = mysql \u@\h:[\d]>\_
+
+[client]
+host = localhost
+user = {{ percona_mysql_read_only_user }}
+password = {{ percona_mysql_root_password }}

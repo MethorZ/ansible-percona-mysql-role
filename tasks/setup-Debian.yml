@@ -1,0 +1,53 @@
+---
+#
+# Setup all required packages
+#
+- block:
+  - name: APT | Install percona apt key repository prerequisites
+    apt:
+      name:
+        - gnupg
+        - ca-certificates
+        - apt-transport-https
+      state: present
+
+  - name: APT | Add the percona apt key
+    apt_key:
+      keyserver: "{{ percona_mysql_keyserver }}"
+      id: "{{ percona_mysql_key_id }}"
+      state: present
+
+  - name: APT | Add the percona repository
+    apt_repository:
+      repo: "{{ percona_mysql_repository }}"
+      state: present
+
+  - name: APT | Updating the apt cache
+    apt:
+      update_cache: yes
+
+  - name: STAT | Check if percona mysql is already installed
+    stat:
+      path: /etc/init.d/mysql
+    register: percona_mysql_installed
+
+  - name: SET_FACT | Determine required MySQL Python libraries.
+    set_fact:
+      percona_mysql_python_packages: "{% if 'python3' in ansible_facts[ansible_python]|default('') %}python3-mysqldb{% else %}python-mysqldb{% endif %}"
+
+  - name: APT | Ensure MySQL Python libraries are installed.
+    apt:
+      name: "{{ percona_mysql_python_packages }}"
+      state: present
+
+  - name: APT | Make sure percona mysql packages are installed
+    apt:
+      name: "{{ percona_mysql_packages }}"
+      state: "{{ percona_mysql_packages_mode }}"
+
+  - name: APT | Make sure percona toolkit is installed (if configured)
+    apt:
+      name: "{{ percona_mysql_toolkit_package }}"
+      state: "{{ percona_mysql_packages_mode }}"
+
+  when: percona_mysql_enabled

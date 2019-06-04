@@ -4,7 +4,7 @@ galaxy_info:
   description: Ansible percona mysql support for Debian
   company: MethorZ
   license: license (BSD, MIT)
-  min_ansible_version: 2.5
+  min_ansible_version: 2.7
   platforms:
     - name: Debian
       versions:

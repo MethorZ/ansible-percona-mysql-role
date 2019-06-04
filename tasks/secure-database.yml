@@ -1,0 +1,20 @@
+---
+##
+# Secure database
+##
+- block:
+  - name: MYSQL_USER | Remove all anonymous accounts
+    mysql_user:
+      name: ''
+      host_all: yes
+      state: absent
+
+  - name: MYSQL_DB | Remove the MySQL test database
+    mysql_db:
+      login_user: root
+      login_password: "{{ percona_mysql_root_password }}"
+      db: test
+      state: absent
+    notify: restart mysql
+
+  when: percona_mysql_enabled

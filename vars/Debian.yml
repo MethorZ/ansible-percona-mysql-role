@@ -1,0 +1,25 @@
+---
+# Repository, keyserver and key id
+__percona_mysql_keyserver: hkp://keyserver.ubuntu.com:80
+__percona_mysql_key_id: 8507EFA5
+__percona_mysql_repository: "deb http://repo.percona.com/apt {{ ansible_facts['distribution_release'] }} main"
+
+# Default Percona MySQL packages
+__percona_mysql_packages:
+  - "percona-server-server-{{ percona_mysql_version }}"
+  - libperconaserverclient20-dev
+
+# MySQL service / daemon
+__percona_mysql_service: mysql
+
+# Main config file
+__percona_mysql_config: /etc/mysql/percona-server.conf.d/mysqld.cnf
+
+# Adapt settings for 'max_open_files' and 'table_open_cache'
+__percona_mysql_systemd_service: /lib/systemd/system/mysql.service
+
+# Jemalloc package
+__percona_mysql_jemalloc_package: libjemalloc1
+
+# Percona toolkit package
+__percona_mysql_toolkit_package: percona-toolkit

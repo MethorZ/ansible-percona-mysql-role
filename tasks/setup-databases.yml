@@ -1,0 +1,13 @@
+---
+##
+# Setup databases for the server
+##
+- name: MYSQL_DB | Create / remove mysql databases
+  mysql_db:
+    name: "{{ item.name }}"
+    collation: "{{ item.collation | default('utf8_bin') }}"
+    encoding: "{{ item.encoding | default('utf8') }}"
+    state: "{{ item.state | default('present') }}"
+    login_user: root
+    login_password: "{{ percona_mysql_root_password }}"
+  with_items: "{{ percona_mysql_databases }}"

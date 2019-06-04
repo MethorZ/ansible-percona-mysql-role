@@ -1,0 +1,142 @@
+##
+# Ansible managed file - DO NOT EDIT!
+#
+# The Percona Server {{ percona_mysql_version }} configuration file.
+#
+# One can use all long options that the program supports.
+# Run program with --help to get a list of available options and with
+# --print-defaults to see which it would actually understand and use.
+#
+# For explanations see
+# http://dev.mysql.com/doc/mysql/en/server-system-variables.html
+##
+
+[mysqld]
+##
+# Database server basic configuration
+##
+user = {{ percona_mysql_user }}
+pid-file = {{ percona_mysql_pid }}
+socket = {{ percona_mysql_socket }}
+port = {{ percona_mysql_port }}
+basedir = {{ percona_mysql_basedir }}
+datadir = {{ percona_mysql_datadir }}
+tmpdir = {{ percona_mysql_tmpdir }}
+lc-messages-dir = {{ percona_mysql_lc_messages_dir }}
+
+# Transaction isolation level
+transaction_isolation = {{ percona_mysql_transaction_isolation }}
+
+# Encoding settings
+collation_server = {{ percona_mysql_collation }}
+character_set_server = {{ percona_mysql_character_set }}
+skip-character-set-client-handshake
+
+# Listening IP
+bind-address = {{ percona_mysql_bind_address }}
+
+# Additional settings and defaults
+skip-external-locking
+{% if percona_mysql_use_explicit_defaults_for_timestamp %}
+explicit_defaults_for_timestamp
+{% endif %}
+sql_mode = {{ percona_mysql_sql_mode }}
+symbolic-links = {{ percona_mysql_symbolic_links }}
+
+##
+# Safety configuration
+##
+max_allowed_packet = 128M
+{% if percona_mysql_skip_name_resolve %}
+skip-name-resolve
+{% endif %}
+wait_timeout = {{ percona_mysql_wait_timeout }}
+interactive_timeout = {{ percona_mysql_interactive_timeout }}
+max_connections = {{ percona_mysql_max_connections }}
+
+##
+# Cache settings
+##
+query_cache_size = 0
+query_cache_type = 0
+
+##
+# Logging configuration
+##
+
+# Default mysql log
+log_error = {{ percona_mysql_error_log }}
+
+# General query log
+general_log = {{ percona_mysql_general_log_enabled }}
+general_log_file = {{ percona_mysql_general_log }}
+
+# Slow query log
+slow_query_log = {{ percona_mysql_slow_query_log_enabled }}
+slow_query_log_file = {{ percona_mysql_slow_query_log }}
+long_query_time = {{ percona_mysql_long_query_time }}
+log_queries_not_using_indexes = {{ percona_mysql_log_query_not_using_indexes }}
+
+##
+# Replication and binary logs
+##
+server_id = {{ percona_mysql_server_id }}
+{% if percona_mysql_binary_log_enabled  %}
+
+log-bin = {{ percona_mysql_log_bin }}
+log_slave_updates = {{ percona_mysql_log_slave_updates }}
+{% if percona_mysql_gtid_mode == 'ON'  %}
+
+enforce-gtid-consistency = {{ percona_mysql_gtid_enforce_consistency }}
+gtid-mode = {{ percona_mysql_gtid_mode }}
+slave_parallel_type = {{ percona_mysql_slave_parallel_type }}
+slave_parallel_workers = {{ percona_mysql_slave_parallel_workers }}
+binlog_group_commit_sync_delay = {{ percona_mysql_binlog_group_commit_sync_delay }}
+{% endif %}
+binlog_format = {{ percona_mysql_binlog_format }}
+expire_logs_days = {{ percona_mysql_expire_log_days }}
+max_binlog_size = {{ percona_mysql_max_binlog_size }}
+max_binlog_files = {{ percona_mysql_max_binlog_files }}
+{% endif %}
+{% if percona_mysql_binary_log_enabled  %}
+
+{% for ignore_db in percona_mysql_replicate_ignore_db %}
+replicate-ignore-db = {{ ignore_db }}
+{% endfor %}
+{% endif %}
+
+##
+# InnoDB configuration
+##
+innodb_file_per_table = {{ percona_mysql_innodb_file_per_table }}
+
+# Buffer pool configuration
+innodb_buffer_pool_size = {{ percona_mysql_innodb_buffer_pool_size }}
+innodb_buffer_pool_instances = {{ percona_mysql_innodb_buffer_pool_instanes }}
+innodb_lru_scan_depth = {{ percona_mysql_innodb_lru_scan_depth }}
+
+# Transaction log configuration
+innodb_flush_log_at_trx_commit = {{ percona_mysql_innodb_flugh_log_at_trx_commit }} # Default 1
+innodb_log_file_size = {{ percona_mysql_innodb_log_file_size }}
+innodb_flush_method = {{ percona_mysql_innodb_flush_method }}
+innodb_log_buffer_size = {{ percona_mysql_innodb_log_buffer_size }}
+
+# I/O settings
+innodb_read_io_threads = {{ percona_mysql_innodb_read_io_threads }}
+innodb_write_io_threads = {{ percona_mysql_innodb_write_io_threads }}
+innodb_io_capacity = {{ percona_mysql_innodb_io_capacity }}
+innodb_io_capacity_max = {{ percona_mysql_innodb_io_capacity_max }}
+
+# Doublewrite buffer settings
+innodb_doublewrite = {{ percona_mysql_innodb_doublewrite }}
+
+# Thread concurrency
+innodb_thread_concurrency = {{ percona_mysql_innodb_thread_concurrency }}
+
+##
+# Additional settings
+##
+group_concat_max_len = {{ percona_mysql_group_concat_max_len }}
+{% if percona_mysql_back_log > 0  %}
+back_log = {{ percona_mysql_back_log }} # Values > 128 requires kernel reconfig
+{% endif %}

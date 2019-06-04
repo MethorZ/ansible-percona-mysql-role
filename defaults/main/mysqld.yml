@@ -1,81 +1,4 @@
-ansible-percona-mysql-role
-=========
-
-Support for percona mysql management for Debian
-
-Requirements
-------------
-
-None
-
-Role Variables
---------------
-```YAML
-##
-# Percona MySQL server configuration
-##
-percona_mysql_enabled: false
-percona_mysql_version: 5.7
-
-# Enable jemalloc (and disable transparent huge pages)
-percona_mysql_jemalloc_enabled: false
-
-##
-# Package configuration
-##
-percona_mysql_packages_mode: latest
-
-# Install the mysql toolkit
-percona_mysql_toolkit_enabled: false
-
-##
-# File and directory path configuration
-##
-
-# Local directory used for temporary files
-percona_mysql_local_temp_dir: /tmp
-percona_mysql_root_my_cnf_file: /root/.my.cnf
-
-##
-# Default user configuration
-##
-
-# Always overwrites existing password when provided
-percona_mysql_root_password: ''
-
-# Triggers automatic renewal of root password
-percona_mysql_renew_existing_password: false
-
-# Creates a file containing the current root password on server
-percona_mysql_create_root_passwd_file: true
-percona_mysql_root_passwd_file: /root/.mysql_passwd
-
-# Create a read only user for security purposes
-percona_mysql_read_only_user_enabled: true
-percona_mysql_read_only_user: root-ro
-percona_mysql_read_only_user_priv: "*.*:SELECT"
-
-##
-# Database and user / access configuration
-##
-
-# Databases to manage
-percona_mysql_databases: []
-#  - name: example_database
-#    collation: utf8_bin
-#    encoding: utf8
-#    state: present
-
-# Users to manage
-percona_mysql_users: []
-#  - name: example_user
-#    host: localhost
-#    password: my_password
-#    priv: "*.example_database:USAGE"
-#    append_privs: no
-#    encrypted: no
-#    state: present
-
+---
 ##
 # Percona MySQL settings
 ##
@@ -96,7 +19,7 @@ percona_mysql_collation: utf8_bin
 percona_mysql_character_set: utf8
 
 # Listening IP - address binding
-percona_mysql_bind_address: 1.2.3.4
+percona_mysql_bind_address: 127.0.0.1
 
 # Additional settings and defaults
 percona_mysql_use_explicit_defaults_for_timestamp: true
@@ -170,8 +93,8 @@ percona_mysql_replicate_ignore_db:
 percona_mysql_innodb_file_per_table: 1
 
 # Buffer pool settings
-percona_mysql_innodb_buffer_pool_size: 1G
-percona_mysql_innodb_buffer_pool_instanes: 4
+percona_mysql_innodb_buffer_pool_size: 4G
+percona_mysql_innodb_buffer_pool_instanes: 8
 percona_mysql_innodb_lru_scan_depth: 1024
 
 # Transaction log settings
@@ -199,25 +122,3 @@ percona_mysql_group_concat_max_len: 2048
 
 # Back log settings. Values >128 require kernel reconfig
 percona_mysql_back_log: -1 # -1 for auto sizing. Will be set omitting entry
-```
-Dependencies
-------------
-
-None
-
-Example Playbook
-----------------
-
-    - hosts: servers
-      roles:
-         - { role: methorz.percona_mysql }
-
-License
--------
-
-BSD
-
-Author Information
-------------------
-
-https://twitter.com/methor_z
