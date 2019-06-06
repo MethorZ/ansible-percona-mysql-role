@@ -61,6 +61,9 @@ percona_mysql_log_query_not_using_indexes: 0
 # Server id
 percona_mysql_server_id: 1
 
+# Role of the server
+percona_mysql_server_role: master # slave
+
 # Enable binary logs
 percona_mysql_binary_log_enabled: false
 percona_mysql_binary_log_dir: /var/log/mysql
@@ -69,9 +72,11 @@ percona_mysql_binary_log_file: mysql-bin.log
 # Enable slave logging to own binary logs (requires enabled binary log on slave)
 percona_mysql_log_slave_updates: 1
 
-# Global transaction id / parallel slave workers
+# Global transaction id
 percona_mysql_gtid_mode: ON
 percona_mysql_gtid_enforce_consistency: ON
+
+# Parallel slave workers
 percona_mysql_slave_parallel_type: LOGICAL_CLOCK
 percona_mysql_slave_parallel_workers: 5
 percona_mysql_binlog_group_commit_sync_delay: 2000

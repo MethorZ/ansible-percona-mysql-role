@@ -81,24 +81,24 @@ log_queries_not_using_indexes = {{ percona_mysql_log_query_not_using_indexes }}
 # Replication and binary logs
 ##
 server_id = {{ percona_mysql_server_id }}
-{% if percona_mysql_binary_log_enabled  %}
+{% if percona_mysql_server_role == 'slave'  %}
 
-log-bin = {{ percona_mysql_log_bin }}
-log_slave_updates = {{ percona_mysql_log_slave_updates }}
-{% if percona_mysql_gtid_mode == 'ON'  %}
-
-enforce-gtid-consistency = {{ percona_mysql_gtid_enforce_consistency }}
-gtid-mode = {{ percona_mysql_gtid_mode }}
 slave_parallel_type = {{ percona_mysql_slave_parallel_type }}
 slave_parallel_workers = {{ percona_mysql_slave_parallel_workers }}
 binlog_group_commit_sync_delay = {{ percona_mysql_binlog_group_commit_sync_delay }}
 {% endif %}
+{% if percona_mysql_binary_log_enabled  %}
+
+gtid-mode = {{ percona_mysql_gtid_mode }}
+enforce-gtid-consistency = {{ percona_mysql_gtid_enforce_consistency }}
+
+log-bin = {{ percona_mysql_log_bin }}
+log_slave_updates = {{ percona_mysql_log_slave_updates }}
+
 binlog_format = {{ percona_mysql_binlog_format }}
 expire_logs_days = {{ percona_mysql_expire_log_days }}
 max_binlog_size = {{ percona_mysql_max_binlog_size }}
 max_binlog_files = {{ percona_mysql_max_binlog_files }}
-{% endif %}
-{% if percona_mysql_binary_log_enabled  %}
 
 {% for ignore_db in percona_mysql_replicate_ignore_db %}
 replicate-ignore-db = {{ ignore_db }}
