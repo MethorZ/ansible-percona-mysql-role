@@ -54,7 +54,7 @@
   - name: FACTS - Define default user for root my.cnf
     set_fact:
       percona_mysql_read_only_user: root
-    when: not percona_mysql_read_only_user_enabled
+    when: percona_mysql_read_only_user is not defined or percona_mysql_read_only_user == ''
 
   - name: FACTS - Define mysql binlog file path
     set_fact:
@@ -76,17 +76,17 @@
     - name: FETCH | Fetch remote root my.cnf
       fetch:
         src: "{{ percona_mysql_existing_my_cnf_file.stat.path }}"
-        dest: "{{ percona_mysql_local_temp_dir }}/ansible_fetched_my.cnf"
+        dest: "{{ percona_mysql_local_temp_dir }}/ansible_fetched_my.cnf.{{ inventory_hostname }}"
         flat: yes
       when: percona_mysql_existing_my_cnf_file.stat.exists
 
     - name: SET_FACTS | Read generated password file for root my.cnf template
       set_fact:
-        percona_mysql_root_existing_password: "{{ lookup('ini', 'password section=client file=' + percona_mysql_local_temp_dir +'/ansible_fetched_my.cnf') }}"
+        percona_mysql_root_existing_password: "{{ lookup('ini', 'password section=client file=' + percona_mysql_local_temp_dir +'/ansible_fetched_my.cnf.' + inventory_hostname) }}"
       when: percona_mysql_existing_my_cnf_file.stat.exists
 
     - name: FILE | Remove fetched file after use
       file:
-        path: "{{ percona_mysql_local_temp_dir }}/ansible_fetched_my.cnf"
+        path: "{{ percona_mysql_local_temp_dir }}/ansible_fetched_my.cnf.{{ inventory_hostname }}"
         state: absent
   when: percona_mysql_enabled

@@ -103,7 +103,7 @@ percona_mysql_innodb_buffer_pool_instanes: 8
 percona_mysql_innodb_lru_scan_depth: 1024
 
 # Transaction log settings
-percona_mysql_innodb_flugh_log_at_trx_commit: 1
+percona_mysql_innodb_flugh_log_at_trx_commit: 0
 percona_mysql_innodb_log_file_size: 2G
 percona_mysql_innodb_flush_method: O_DIRECT
 percona_mysql_innodb_log_buffer_size: 16M
