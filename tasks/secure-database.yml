@@ -17,4 +17,4 @@
       state: absent
     notify: restart mysql
 
-  when: percona_mysql_enabled
+  when: percona_mysql_enabled and percona_mysql_server_role == 'master'

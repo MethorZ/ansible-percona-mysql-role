@@ -11,7 +11,7 @@ percona_mysql_jemalloc_enabled: true
 ##
 # Package configuration
 ##
-percona_mysql_packages_mode: latest
+percona_mysql_packages_mode: present
 percona_mysql_toolkit_enabled: true
 
 ##
