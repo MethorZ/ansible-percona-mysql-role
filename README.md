@@ -101,7 +101,6 @@ percona_mysql_bind_address: 1.2.3.4
 # Additional settings and defaults
 percona_mysql_use_explicit_defaults_for_timestamp: true
 percona_mysql_sql_mode: NO_ENGINE_SUBSTITUTION,STRICT_ALL_TABLES,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER
-percona_mysql_symbolic_links: 0
 
 ##
 # Safety configuration
@@ -117,6 +116,7 @@ percona_mysql_max_connections: 150
 ##
 percona_mysql_query_cache_size: 0
 percona_mysql_query_cache_type: 0
+percona_mysql_thread_cache_size: 10
 
 ##
 # Logging configuration
@@ -161,7 +161,6 @@ percona_mysql_binlog_group_commit_sync_delay: 2000
 percona_mysql_binlog_format: MIXED
 percona_mysql_expire_log_days: 7
 percona_mysql_max_binlog_size: 1G
-percona_mysql_max_binlog_files: 100
 
 # Replication settings
 percona_mysql_replicate_ignore_db:

@@ -15,7 +15,7 @@
       dest: /etc/systemd/system/disable-transparent-hugepages.service
       owner: root
       group: root
-      mode: 0755
+      mode: 0644
 
   - name: SYSTEMD | Reload daemon now
     systemd:

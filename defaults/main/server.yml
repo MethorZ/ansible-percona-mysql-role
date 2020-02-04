@@ -45,6 +45,8 @@ percona_mysql_read_only_user_priv: "*.*:SELECT"
 # Database and user / access configuration
 ##
 
+percona_mysql_default_schema: false
+
 # Databases to manage
 percona_mysql_databases: []
 #  - name: example_database

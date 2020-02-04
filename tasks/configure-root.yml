@@ -27,7 +27,6 @@
         name: root
         password: "{{ lookup('password', percona_mysql_password_file.path + ' length=15') }}"
         priv: "*.*:ALL,GRANT"
-        login_user: root
 
     - name: SET_FACTS | Read generated password file for root my.cnf template
       set_fact:

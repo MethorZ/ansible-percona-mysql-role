@@ -3,8 +3,13 @@
 # Secure database
 ##
 - block:
+  - debug:
+      msg: "Current password now: {{ percona_mysql_root_password }}"
+
   - name: MYSQL_USER | Remove all anonymous accounts
     mysql_user:
+      login_user: root
+      login_unix_socket: "{{ percona_mysql_socket }}"
       name: ''
       host_all: yes
       state: absent
@@ -12,7 +17,7 @@
   - name: MYSQL_DB | Remove the MySQL test database
     mysql_db:
       login_user: root
-      login_password: "{{ percona_mysql_root_password }}"
+      login_unix_socket: "{{ percona_mysql_socket }}"
       db: test
       state: absent
     notify: restart mysql

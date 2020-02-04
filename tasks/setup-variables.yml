@@ -6,7 +6,12 @@
   - name: INCLUDE_VARS | OS specific vars
     include_vars: "{{ ansible_facts['os_family'] }}.yml"
 
-  - name: FACTS - Define Percona MySQL server package
+  - name: FACTS - Define MySQL server 8 package
+    set_fact:
+      percona_mysql_packages: "{{ __percona_mysql8_packages | list }}"
+    when: percona_mysql_packages is not defined and percona_mysql_version == 8
+
+  - name: FACTS - Define Percona MySQL 5 server package
     set_fact:
       percona_mysql_packages: "{{ __percona_mysql_packages | list }}"
     when: percona_mysql_packages is not defined
@@ -41,14 +46,24 @@
       percona_mysql_repository: "{{ __percona_mysql_repository }}"
     when: percona_mysql_repository is not defined
 
-  - name: FACTS - Define Percona MySQL main conf file
+  - name: FACTS - Define Percona MySQL 8 main conf file
+    set_fact:
+      percona_mysql_config: "{{ __percona_mysql8_config }}"
+    when: percona_mysql_config is not defined and percona_mysql_version == 8
+
+  - name: FACTS - Define Percona MySQL 5 main conf file
     set_fact:
       percona_mysql_config: "{{ __percona_mysql_config }}"
     when: percona_mysql_config is not defined
 
-  - name: FACTS - Define jemalloc package
+  - name: FACTS - Define jemalloc package (for buster)
     set_fact:
-      percona_mysql_jemalloc_package: "{{ __percona_mysql_jemalloc_package }}"
+      percona_mysql_jemalloc_package: "{{ __percona_mysql_jemalloc2_package }}"
+    when: percona_mysql_jemalloc_package is not defined and ansible_facts['distribution_release'] == 'buster'
+
+  - name: FACTS - Define jemalloc package (for older than buster)
+    set_fact:
+      percona_mysql_jemalloc_package: "{{ __percona_mysql_jemalloc1_package }}"
     when: percona_mysql_jemalloc_package is not defined
 
   - name: FACTS - Define default user for root my.cnf
@@ -58,7 +73,7 @@
 
   - name: FACTS - Define mysql binlog file path
     set_fact:
-      percona_mysql_log_bin: "{{ percona_mysql_binary_log_dir }}/percona_mysql_binary_log_file"
+      percona_mysql_log_bin: "{{ percona_mysql_binary_log_dir }}/{{ percona_mysql_binary_log_file }}"
     when: percona_mysql_log_bin is not defined
 
   - name: BLOCK | Attempt to discover existing root password

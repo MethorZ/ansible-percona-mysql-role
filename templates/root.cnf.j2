@@ -3,6 +3,9 @@
 ##
 [mysql]
 prompt = mysql \u@\h:[\d]>\_
+{% if percona_mysql_default_schema  %}
+database = {{ percona_mysql_default_schema }}
+{% endif %}
 
 [client]
 host = localhost
