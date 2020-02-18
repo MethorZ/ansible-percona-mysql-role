@@ -25,6 +25,9 @@
     - name: MYSQL_USER | Set a random generated MySQL root password (no password provided)
       mysql_user:
         name: root
+        login_user: root
+        #login_password: ''
+        login_unix_socket: "{{ percona_mysql_socket }}"
         password: "{{ lookup('password', percona_mysql_password_file.path + ' length=15') }}"
         priv: "*.*:ALL,GRANT"
 

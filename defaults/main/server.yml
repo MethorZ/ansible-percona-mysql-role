@@ -34,7 +34,7 @@ percona_mysql_renew_existing_password: false
 
 # Creates a file containing the current root password on server
 percona_mysql_create_root_passwd_file: true
-percona_mysql_root_passwd_file: /root/.mysql_passwd
+percona_mysql_root_passwd_file: /root/.pwd-mysql
 
 # Create a read only user for security purposes
 percona_mysql_read_only_user_enabled: true

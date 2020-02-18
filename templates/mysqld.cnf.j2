@@ -123,6 +123,9 @@ replicate-ignore-db = {{ ignore_db }}
 # InnoDB configuration
 ##
 innodb_file_per_table = {{ percona_mysql_innodb_file_per_table }}
+{% if percona_mysql_innodb_data_file_path is defined %}
+innodb_data_file_path = {{ percona_mysql_innodb_data_file_path }}
+{% endif %}
 
 # Buffer pool configuration
 innodb_buffer_pool_size = {{ percona_mysql_innodb_buffer_pool_size }}
