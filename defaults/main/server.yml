@@ -65,4 +65,12 @@ percona_mysql_users: []
 #    state: present
 
 
+##
+# MySQL additional setting (plugins, etc)
+##
 
+# MySQL plugins folder
+percona_mysql_plugins_dir: /usr/lib/mysql/plugin
+
+# Files need to exist within the "files" directory
+percona_mysql_plugins: []

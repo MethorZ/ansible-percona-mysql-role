@@ -28,6 +28,9 @@
 - name: IMPORT_TASKS | Configure percona mysql
   import_tasks: "configure-mysql.yml"
 
+- name: IMPORT_TASKS | Configure percona mysql plugins
+  import_tasks: "setup-plugins.yml"
+
 - name: IMPORT_TASKS | Configure root usage and my.cnf shortcut
   import_tasks: "configure-root.yml"
 

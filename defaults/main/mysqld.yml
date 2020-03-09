@@ -80,7 +80,7 @@ percona_mysql_binlog_transaction_dependency_tracking: COMMIT_ORDER
 percona_mysql_transaction_write_set_extraction: 'OFF'
 
 # Enable slave logging to own binary logs (requires enabled binary log on slave)
-percona_mysql_log_slave_updates: 1
+percona_mysql_log_slave_updates: 0
 
 # Global transaction id
 percona_mysql_gtid_mode: 'ON'

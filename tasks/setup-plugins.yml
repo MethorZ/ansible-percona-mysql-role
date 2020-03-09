@@ -1,0 +1,20 @@
+---
+#
+# Setup all required mysql plugins
+#
+- block:
+
+  - name: COPY | Copy required MySQL plugins
+    copy:
+      src: "{{ item }}"
+      dest: "{{ percona_mysql_plugins_dir }}/{{ item }}"
+      owner: root
+      group: root
+      mode: 0644
+    with_items: "{{ percona_mysql_plugins }}"
+    notify: restart mysql
+
+  when:
+    - percona_mysql_enabled
+
+
