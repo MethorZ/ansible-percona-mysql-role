@@ -50,4 +50,13 @@
       name: "{{ percona_mysql_toolkit_package }}"
       state: "{{ percona_mysql_packages_mode }}"
 
+  - name: SYSCTL | Set sysctl settings
+    sysctl:
+      sysctl_set: yes
+      reload: yes
+      state: present
+      name: "{{ item.key }}"
+      value: "{{ item.value }}"
+    with_dict: "{{ percona_mysql_sysctl_settings }}"
+
   when: percona_mysql_enabled
