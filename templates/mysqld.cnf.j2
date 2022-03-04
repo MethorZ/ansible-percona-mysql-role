@@ -50,7 +50,9 @@ sql_mode = {{ percona_mysql_sql_mode }}
 ##
 # Safety configuration
 ##
-max_allowed_packet = 128M
+{% if percona_mysql_max_allowed_packet %}
+max_allowed_packet = {{ percona_mysql_max_allowed_packet }}
+{% endif %}
 {% if percona_mysql_skip_name_resolve %}
 skip-name-resolve
 {% endif %}
