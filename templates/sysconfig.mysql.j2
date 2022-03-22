@@ -1,0 +1,9 @@
+##
+# Ansible managed file - DO NOT EDIT!
+##
+# defaults from percona /etc/default/mysql
+STARTTIMEOUT=120
+STOPTIMEOUT=600
+
+# Enable jemalloc1
+LD_PRELOAD={{ percona_mysql_jemalloc_path }}

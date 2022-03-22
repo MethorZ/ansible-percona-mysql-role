@@ -17,6 +17,24 @@
       group: root
       mode: 0644
 
+  - name: TEMPLATE | Apply jemalloc sysconfig mysql template
+    template:
+      src: "sysconfig.mysql.j2"
+      dest: "{{ percona_mysql_jemalloc_sysconfig }}"
+      owner: root
+      group: root
+      mode: 0644
+    notify: restart mysql
+
+  - name: LINEINFILE | Switch to malloc implementation
+    lineinfile:
+      path: "{{ percona_mysql_systemd_service }}"
+      regexp: '^EnvironmentFile='
+      line: "EnvironmentFile={{ percona_mysql_jemalloc_sysconfig }}"
+    notify:
+      - daemon reload
+      - restart mysql
+
   - name: SYSTEMD | Reload daemon now
     systemd:
       daemon_reload: yes

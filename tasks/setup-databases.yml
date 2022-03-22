@@ -3,7 +3,7 @@
 # Setup databases for the server
 ##
 - name: MYSQL_DB | Create / remove mysql databases
-  mysql_db:
+  community.mysql.mysql_db:
     name: "{{ item.name }}"
     collation: "{{ item.collation | default('utf8_bin') }}"
     encoding: "{{ item.encoding | default('utf8') }}"

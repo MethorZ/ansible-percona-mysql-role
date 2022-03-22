@@ -4,7 +4,7 @@
 ##
 - block:
   - name: MYSQL_USER | Set provided MySQL root password
-    mysql_user:
+    community.mysql.mysql_user:
       name: root
       password: "{{ percona_mysql_root_password }}"
       priv: "*.*:ALL,GRANT"
@@ -23,13 +23,13 @@
       register: percona_mysql_password_file
 
     - name: MYSQL_USER | Set a random generated MySQL root password (no password provided)
-      mysql_user:
+      community.mysql.mysql_user:
         name: root
         login_user: root
         #login_password: ''
         login_unix_socket: "{{ percona_mysql_socket }}"
         password: "{{ lookup('password', percona_mysql_password_file.path + ' length=15') }}"
-        priv: "*.*:ALL,GRANT"
+        priv: "*.*:ALL,GRANT,BACKUP_ADMIN,SYSTEM_USER"
 
     - name: SET_FACTS | Read generated password file for root my.cnf template
       set_fact:
@@ -44,7 +44,7 @@
     when: (percona_mysql_root_password is not defined or percona_mysql_root_password == '') and percona_mysql_root_existing_password is defined
 
   - name: MYSQL_USER | Create read-only MySQL user as default login user
-    mysql_user:
+    community.mysql.mysql_user:
       name: root-ro
       password: "{{ percona_mysql_root_password }}"
       priv: "*.*:SELECT"

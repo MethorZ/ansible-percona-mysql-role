@@ -3,11 +3,14 @@
 __percona_mysql_keyserver: hkp://keyserver.ubuntu.com:80
 __percona_mysql_key_id: 9334A25F8507EFA5
 __percona_mysql_repository: "deb http://repo.percona.com/apt {{ ansible_facts['distribution_release'] }} main"
+__percona_mysql8_repository: "https://repo.percona.com/apt/percona-release_latest.{{ ansible_facts['distribution_release'] }}_all.deb"
 
 # Default Percona MySQL 5.X packages
 __percona_mysql_packages:
   - "percona-server-server-{{ percona_mysql_version }}"
   - libperconaserverclient20-dev
+
+__percona_mysql8_enable_repository: "percona-release setup ps80"
 
 # Default Percona MySQL 8 packages
 __percona_mysql8_packages:
@@ -26,7 +29,11 @@ __percona_mysql_systemd_service: /lib/systemd/system/mysql.service
 
 # Jemalloc packages
 __percona_mysql_jemalloc1_package: libjemalloc1
+__percona_mysql_jemalloc1_path: /usr/lib/x86_64-linux-gnu/libjemalloc.so.1
 __percona_mysql_jemalloc2_package: libjemalloc2
+__percona_mysql_jemalloc2_path: /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
+
+__percona_mysql_jemalloc_sysconfig: /etc/default/ansible.mysql
 
 # Percona toolkit package
 __percona_mysql_toolkit_package: percona-toolkit

@@ -23,8 +23,8 @@ basedir = {{ percona_mysql_basedir }}
 datadir = {{ percona_mysql_datadir }}
 tmpdir = {{ percona_mysql_tmpdir }}
 lc-messages-dir = {{ percona_mysql_lc_messages_dir }}
+{% if percona_mysql_version == 8 and percona_mysql_restore_old_authentication %}
 
-{% if percona_mysql_version == 8 %}
 # Restore old authentication
 default-authentication-plugin = mysql_native_password
 {% endif %}
@@ -106,9 +106,10 @@ log-bin = {{ percona_mysql_log_bin }}
 log_slave_updates = {{ percona_mysql_log_slave_updates }}
 
 binlog_format = {{ percona_mysql_binlog_format }}
-expire_logs_days = {{ percona_mysql_expire_log_days }}
 {% if percona_mysql_version == 8  %}
 binlog_expire_logs_seconds =  {{ percona_mysql_binlog_expire_logs_seconds }}
+{% else %}
+expire_logs_days = {{ percona_mysql_expire_log_days }}
 {% endif %}
 max_binlog_size = {{ percona_mysql_max_binlog_size }}
 binlog_space_limit = {{ percona_mysql_binlog_space_limit }}

@@ -22,9 +22,19 @@
       repo: "{{ percona_mysql_repository }}"
       state: present
 
+  - name: APT | Install the MySQL 8 packages
+    apt:
+      deb: "{{ percona_mysql8_repository }}"
+    when: percona_enable_repository is defined
+
   - name: APT | Updating the apt cache
     apt:
       update_cache: yes
+
+  - name: COMMAND | Enable the MySQL 8 repository
+    command: >
+      {{ percona_enable_repository }}
+    when: percona_enable_repository is defined
 
   - name: STAT | Check if percona mysql is already installed
     stat:
@@ -33,7 +43,8 @@
 
   - name: SET_FACT | Determine required MySQL Python libraries.
     set_fact:
-      percona_mysql_python_packages: "{% if 'python3' in ansible_facts[ansible_python]|default('') %}python3-mysqldb{% else %}python-mysqldb{% endif %}"
+      #percona_mysql_python_packages: "{% if 'python3' in ansible_facts[ansible_python]|default('') %}python3-mysqldb{% else %}python-mysqldb{% endif %}"
+      percona_mysql_python_packages: python3-mysqldb
 
   - name: APT | Ensure MySQL Python libraries are installed.
     apt:
