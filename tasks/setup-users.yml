@@ -7,11 +7,12 @@
     name: "{{ item.name }}"
     host: "{{ item.host | default('localhost') }}"
     password: "{{ item.password }}"
-    priv: "{{ item.priv | default('*.*:USAGE') }}"
+    priv: "{{ item.priv }}"
     state: "{{ item.state | default('present') }}"
     append_privs: "{{ item.append_privs | default('no') }}"
     encrypted: "{{ item.encrypted | default('no') }}"
     login_user: root
     login_password: "{{ percona_mysql_root_password }}"
-    login_unix_socket: "{{ percona_mysql_socket }}"
+    login_unix_socket: "{{ percona_mysql_config_socket }}"
   with_items: "{{ percona_mysql_users }}"
+  when: percona_mysql_enabled

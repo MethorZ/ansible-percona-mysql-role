@@ -15,109 +15,102 @@
 ##
 # Database server basic configuration
 ##
-user = {{ percona_mysql_user }}
-pid-file = {{ percona_mysql_pid }}
-socket = {{ percona_mysql_socket }}
-port = {{ percona_mysql_port }}
-basedir = {{ percona_mysql_basedir }}
-datadir = {{ percona_mysql_datadir }}
-tmpdir = {{ percona_mysql_tmpdir }}
-lc-messages-dir = {{ percona_mysql_lc_messages_dir }}
-{% if percona_mysql_version == 8 and percona_mysql_restore_old_authentication %}
-
-# Restore old authentication
-default-authentication-plugin = mysql_native_password
-{% endif %}
+user = {{ percona_mysql_config_user }}
+pid-file = {{ percona_mysql_config_pid }}
+socket = {{ percona_mysql_config_socket }}
+port = {{ percona_mysql_config_port }}
+basedir = {{ percona_mysql_config_basedir }}
+datadir = {{ percona_mysql_config_datadir }}
+tmpdir = {{ percona_mysql_config_tmpdir }}
+lc-messages-dir = {{ percona_mysql_config_lc_messages_dir }}
 
 # Transaction isolation level
-transaction_isolation = {{ percona_mysql_transaction_isolation }}
+transaction_isolation = {{ percona_mysql_config_transaction_isolation }}
 
 # Encoding settings
-collation_server = {{ percona_mysql_collation }}
-character_set_server = {{ percona_mysql_character_set }}
+collation_server = {{ percona_mysql_config_collation }}
+character_set_server = {{ percona_mysql_config_character_set }}
+{% if percona_mysql_config_skip_client_character_set %}
 skip-character-set-client-handshake
+{% endif %}
 
 # Listening IP
-bind-address = {{ percona_mysql_bind_address }}
+bind-address = {{ percona_mysql_config_bind_address }}
 
 # Additional settings and defaults
-skip-external-locking
-{% if percona_mysql_use_explicit_defaults_for_timestamp %}
+{% if percona_mysql_config_use_explicit_defaults_for_timestamp %}
 explicit_defaults_for_timestamp
 {% endif %}
-sql_mode = {{ percona_mysql_sql_mode }}
+sql_mode = {{ percona_mysql_config_sql_mode }}
 
 ##
 # Safety configuration
 ##
-{% if percona_mysql_max_allowed_packet %}
-max_allowed_packet = {{ percona_mysql_max_allowed_packet }}
-{% endif %}
-{% if percona_mysql_skip_name_resolve %}
+{% if percona_mysql_config_skip_name_resolve %}
 skip-name-resolve
 {% endif %}
-wait_timeout = {{ percona_mysql_wait_timeout }}
-interactive_timeout = {{ percona_mysql_interactive_timeout }}
-max_connections = {{ percona_mysql_max_connections }}
+wait_timeout = {{ percona_mysql_config_wait_timeout }}
+interactive_timeout = {{ percona_mysql_config_interactive_timeout }}
+max_connections = {{ percona_mysql_config_max_connections }}
 
 ##
 # Cache settings
 ##
-{% if percona_mysql_version != 8 %}
-query_cache_size = 0
-query_cache_type = 0
-{% endif %}
-thread_cache_size = {{ percona_mysql_thread_cache_size }}
+thread_cache_size = {{ percona_mysql_config_thread_cache_size }}
 
 ##
 # Logging configuration
 ##
 
 # Default mysql log
-log_error = {{ percona_mysql_error_log }}
+log_error = {{ percona_mysql_config_error_log }}
 
 # General query log
-general_log = {{ percona_mysql_general_log_enabled }}
-general_log_file = {{ percona_mysql_general_log }}
+general_log = {{ percona_mysql_config_general_log_enabled }}
+general_log_file = {{ percona_mysql_config_general_log }}
 
 # Slow query log
-slow_query_log = {{ percona_mysql_slow_query_log_enabled }}
-slow_query_log_file = {{ percona_mysql_slow_query_log }}
-long_query_time = {{ percona_mysql_long_query_time }}
-log_queries_not_using_indexes = {{ percona_mysql_log_query_not_using_indexes }}
+slow_query_log = {{ percona_mysql_config_slow_query_log_enabled }}
+slow_query_log_file = {{ percona_mysql_config_slow_query_log }}
+long_query_time = {{ percona_mysql_config_long_query_time }}
+log_queries_not_using_indexes = {{ percona_mysql_config_log_query_not_using_indexes }}
 
 ##
 # Replication and binary logs
 ##
-server_id = {{ percona_mysql_server_id }}
-{% if percona_mysql_server_role == 'slave'  %}
+server_id = {{ percona_mysql_config_server_id }}
+{% if percona_mysql_config_server_role == 'slave'  %}
 
-slave_parallel_type = {{ percona_mysql_slave_parallel_type }}
-slave_parallel_workers = {{ percona_mysql_slave_parallel_workers }}
-slave_pending_jobs_size_max = {{ percona_slave_pending_jobs_size_max }}
-slave_preserve_commit_order = {{ percona_mysql_slave_preserve_commit_order }}
+replica_parallel_type = {{ percona_mysql_config_replica_parallel_type }} # Can be removed after MySQL ≥ 8.0.27
+replica_parallel_workers = {{ percona_mysql_config_replica_parallel_workers }}
+replica_pending_jobs_size_max = {{ percona_replica_pending_jobs_size_max }}
+replica_preserve_commit_order = {{ percona_mysql_config_replica_preserve_commit_order }}
 {% endif %}
-{% if percona_mysql_binary_log_enabled  %}
+{% if percona_mysql_config_binary_log_enabled  %}
 
-gtid-mode = {{ percona_mysql_gtid_mode }}
-enforce-gtid-consistency = {{ percona_mysql_gtid_enforce_consistency }}
+gtid-mode = {{ percona_mysql_config_gtid_mode }}
+enforce-gtid-consistency = {{ percona_mysql_config_gtid_enforce_consistency }}
 
-log-bin = {{ percona_mysql_log_bin }}
-log_slave_updates = {{ percona_mysql_log_slave_updates }}
+log-bin = {{ percona_mysql_config_binary_log_file }}
+log_replica_updates = {{ percona_mysql_config_log_replica_updates }}
 
-binlog_format = {{ percona_mysql_binlog_format }}
-{% if percona_mysql_version == 8  %}
-binlog_expire_logs_seconds =  {{ percona_mysql_binlog_expire_logs_seconds }}
-{% else %}
-expire_logs_days = {{ percona_mysql_expire_log_days }}
+binlog_format = {{ percona_mysql_config_binlog_format }}
+binlog_expire_logs_seconds = {{ percona_mysql_config_binlog_expire_logs_seconds }}
+max_binlog_size = {{ percona_mysql_config_max_binlog_size }}
+binlog_space_limit = {{ percona_mysql_config_binlog_space_limit }}
+binlog_group_commit_sync_delay = {{ percona_mysql_config_binlog_group_commit_sync_delay }}
+binlog_transaction_dependency_tracking = {{ percona_mysql_config_binlog_transaction_dependency_tracking }}
+
+# Crash safe replication for GTID and Multi-Threaded Replication
+sync_binlog = {{ percona_mysql_config_sync_binlog }}
+{% if percona_mysql_config_server_role == 'slave'  %}
+sync_relay_log = {{ percona_mysql_config_sync_relay_log }}
+sync_source_info = {{ percona_mysql_config_sync_source_info }}
+sync_relay_log_info = {{ percona_mysql_config_sync_relay_log_info }}
+relay_log_recovery: {{ percona_mysql_config_relay_log_recovery }}
 {% endif %}
-max_binlog_size = {{ percona_mysql_max_binlog_size }}
-binlog_space_limit = {{ percona_mysql_binlog_space_limit }}
-binlog_group_commit_sync_delay = {{ percona_mysql_binlog_group_commit_sync_delay }}
-binlog_transaction_dependency_tracking = {{ percona_mysql_binlog_transaction_dependency_tracking }}
-transaction_write_set_extraction = {{ percona_mysql_transaction_write_set_extraction }}
 
-{% for ignore_db in percona_mysql_replicate_ignore_db %}
+{% for ignore_db in percona_mysql_config_replicate_ignore_db %}
 replicate-ignore-db = {{ ignore_db }}
 {% endfor %}
 {% endif %}
@@ -125,38 +118,43 @@ replicate-ignore-db = {{ ignore_db }}
 ##
 # InnoDB configuration
 ##
-innodb_file_per_table = {{ percona_mysql_innodb_file_per_table }}
+innodb_file_per_table = {{ percona_mysql_config_innodb_file_per_table }}
 {% if percona_mysql_innodb_data_file_path is defined %}
-innodb_data_file_path = {{ percona_mysql_innodb_data_file_path }}
+innodb_data_file_path = {{ percona_mysql_config_innodb_data_file_path }}
 {% endif %}
 
 # Buffer pool configuration
-innodb_buffer_pool_size = {{ percona_mysql_innodb_buffer_pool_size }}
-innodb_buffer_pool_instances = {{ percona_mysql_innodb_buffer_pool_instanes }}
-innodb_lru_scan_depth = {{ percona_mysql_innodb_lru_scan_depth }}
+innodb_buffer_pool_chunk_size = {{ percona_mysql_config_innodb_buffer_chunk_size }}
+innodb_buffer_pool_instances = {{ percona_mysql_config_innodb_buffer_pool_instances }}
+innodb_buffer_pool_size = {{ percona_mysql_config_innodb_buffer_pool_size }}
+innodb_lru_scan_depth = {{ percona_mysql_config_innodb_lru_scan_depth }}
 
 # Transaction log configuration
-innodb_flush_log_at_trx_commit = {{ percona_mysql_innodb_flugh_log_at_trx_commit }} # Default 1
-innodb_log_file_size = {{ percona_mysql_innodb_log_file_size }}
-innodb_flush_method = {{ percona_mysql_innodb_flush_method }}
-innodb_log_buffer_size = {{ percona_mysql_innodb_log_buffer_size }}
+innodb_flush_log_at_trx_commit = {{ percona_mysql_config_innodb_flush_log_at_trx_commit }} # Default 1
+innodb_flush_method = {{ percona_mysql_config_innodb_flush_method }}
+innodb_log_buffer_size = {{ percona_mysql_config_innodb_log_buffer_size }}
+innodb_redo_log_capacity = {{ percona_mysql_config_innodb_redo_log_capacity }}
 
 # I/O settings
-innodb_read_io_threads = {{ percona_mysql_innodb_read_io_threads }}
-innodb_write_io_threads = {{ percona_mysql_innodb_write_io_threads }}
-innodb_io_capacity = {{ percona_mysql_innodb_io_capacity }}
-innodb_io_capacity_max = {{ percona_mysql_innodb_io_capacity_max }}
+innodb_read_io_threads = {{ percona_mysql_config_innodb_read_io_threads }}
+innodb_write_io_threads = {{ percona_mysql_config_innodb_write_io_threads }}
+innodb_io_capacity = {{ percona_mysql_config_innodb_io_capacity }}
+innodb_io_capacity_max = {{ percona_mysql_config_innodb_io_capacity_max }}
 
 # Doublewrite buffer settings
-innodb_doublewrite = {{ percona_mysql_innodb_doublewrite }}
+innodb_doublewrite = {{ percona_mysql_config_innodb_doublewrite }}
 
 # Thread concurrency
-innodb_thread_concurrency = {{ percona_mysql_innodb_thread_concurrency }}
+innodb_thread_concurrency = {{ percona_mysql_config_innodb_thread_concurrency }}
 
 ##
 # Additional settings
 ##
-group_concat_max_len = {{ percona_mysql_group_concat_max_len }}
-{% if percona_mysql_back_log > 0  %}
-back_log = {{ percona_mysql_back_log }} # Values > 128 requires kernel reconfig
+group_concat_max_len = {{ percona_mysql_config_group_concat_max_len }}
+{% if percona_mysql_config_back_log > 0  %}
+back_log = {{ percona_mysql_config_back_log }} # Values > 128 requires kernel reconfig
 {% endif %}
+{% if percona_mysql_config_max_allowed_packet %}
+max_allowed_packet = {{ percona_mysql_config_max_allowed_packet }}
+{% endif %}
+open_files_limit = {{ percona_mysql_config_open_files_limit }}

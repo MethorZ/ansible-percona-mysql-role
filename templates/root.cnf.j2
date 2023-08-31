@@ -3,7 +3,7 @@
 ##
 [mysql]
 prompt = mysql \u@\h:[\d]>\_
-{% if percona_mysql_default_schema  %}
+{% if percona_mysql_default_schema is defined and percona_mysql_default_schema != ''  %}
 database = {{ percona_mysql_default_schema }}
 {% endif %}
 

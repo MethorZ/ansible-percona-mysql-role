@@ -1,0 +1,12 @@
+---
+#
+# Setup all required packages
+#
+- block:
+
+  - name: APT | Make sure percona toolkit is installed (if configured)
+    apt:
+      name: "{{ percona_mysql_toolkit_package }}"
+      state: "{{ percona_mysql_packages_mode }}"
+
+  when: percona_mysql_enabled and percona_mysql_toolkit_enabled

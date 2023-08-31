@@ -3,16 +3,33 @@
 # Percona MySQL server configuration
 ##
 percona_mysql_enabled: false
-percona_mysql_version: 5.7
+percona_mysql_version: 8.0
 
 # Enable jemalloc (and disable transparent huge pages)
 percona_mysql_jemalloc_enabled: true
+
+# Sets additional sysctl settings
+percona_mysql_sysctl_settings:
+  net.core.somaxconn: 4096 # (/proc/sys/net/core/somaxconn) at least 2048 (or straight to 65536 if multipurpose server like Redis oder Webserver)
+  net.ipv4.tcp_max_syn_backlog: 4096 # (/proc/sys/net/ipv4/tcp_max_syn_backlog) at least 2048
+  vm.zone_reclaim_mode: 1 # /proc/sys/vm/zone_reclaim_mode (change from 0 to 1) - Dependency for numa_interleave: ON
+  vm.vfs_cache_pressure: 1000 # /proc/sys/vm/vfs_cache_pressure (for example from 100 to 1000) - Dependency for numa_interleave: ON
 
 ##
 # Package configuration
 ##
 percona_mysql_packages_mode: present
-percona_mysql_toolkit_enabled: true
+percona_mysql_toolkit_enabled: false
+
+##
+# MySQL additional setting (plugins, etc)
+##
+
+# MySQL plugins folder
+percona_mysql_plugins_dir: /usr/lib/mysql/plugin
+
+# Files need to exist within the role's "files" directory
+percona_mysql_plugins: []
 
 ##
 # File and directory path configuration
@@ -23,10 +40,10 @@ percona_mysql_local_temp_dir: /tmp
 percona_mysql_root_my_cnf_file: /root/.my.cnf
 
 ##
-# Default user configuration
+# Default ROOT user configuration
 ##
 
-# Always overwrites existing password when provided
+# Sets the provided password for root, overrides existing one
 percona_mysql_root_password: ''
 
 # Triggers automatic renewal of root password
@@ -36,7 +53,9 @@ percona_mysql_renew_existing_password: false
 percona_mysql_create_root_passwd_file: true
 percona_mysql_root_passwd_file: /root/.pwd-mysql
 
-# Create a read only user for security purposes
+##
+# Creation of an additional read only root user
+##
 percona_mysql_read_only_user_enabled: true
 percona_mysql_read_only_user: root-ro
 percona_mysql_read_only_user_priv: "*.*:SELECT"
@@ -44,8 +63,7 @@ percona_mysql_read_only_user_priv: "*.*:SELECT"
 ##
 # Database and user / access configuration
 ##
-
-percona_mysql_default_schema: false
+percona_mysql_default_schema: ''
 
 # Databases to manage
 percona_mysql_databases: []
@@ -59,22 +77,12 @@ percona_mysql_users: []
 #  - name: example_user
 #    host: localhost
 #    password: my_password
-#    priv: "*.example_database:USAGE"
+#    priv: "*.example_database:SELECT"
 #    append_privs: no
 #    encrypted: no
 #    state: present
 
 
-##
-# MySQL additional setting (plugins, etc)
-##
 
-# MySQL plugins folder
-percona_mysql_plugins_dir: /usr/lib/mysql/plugin
 
-# Files need to exist within the "files" directory
-percona_mysql_plugins: []
 
-# Sets additional sysctl settings
-percona_mysql_sysctl_settings:
-  net.core.somaxconn: 2048

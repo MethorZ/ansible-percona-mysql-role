@@ -3,65 +3,40 @@
 # Setup all required packages
 #
 - block:
-  - name: APT | Install percona apt key repository prerequisites
-    apt:
-      name:
-        - gnupg
-        - ca-certificates
-        - apt-transport-https
-      state: present
-
-  - name: APT | Add the percona apt key
-    apt_key:
-      keyserver: "{{ percona_mysql_keyserver }}"
-      id: "{{ percona_mysql_key_id }}"
-      state: present
-
-  - name: APT | Add the percona repository
-    apt_repository:
-      repo: "{{ percona_mysql_repository }}"
-      state: present
-
-  - name: APT | Install the MySQL 8 packages
-    apt:
-      deb: "{{ percona_mysql8_repository }}"
-    when: percona_enable_repository is defined
-
   - name: APT | Updating the apt cache
     apt:
       update_cache: yes
 
-  - name: COMMAND | Enable the MySQL 8 repository
-    command: >
-      {{ percona_enable_repository }}
-    when: percona_enable_repository is defined
+  - name: APT | Install package dependencies
+    apt:
+      name: "{{ percona_mysql_package_dependencies }}"
+      state: present
 
-  - name: STAT | Check if percona mysql is already installed
-    stat:
-      path: /etc/init.d/mysql
-    register: percona_mysql_installed
+  - name: APT | Install the Percona MySQL repository
+    apt:
+      deb: "{{ percona_mysql_repository }}"
+    when: percona_mysql_repository is defined
 
-  - name: SET_FACT | Determine required MySQL Python libraries.
-    set_fact:
-      #percona_mysql_python_packages: "{% if 'python3' in ansible_facts[ansible_python]|default('') %}python3-mysqldb{% else %}python-mysqldb{% endif %}"
-      percona_mysql_python_packages: python3-mysqldb
+  - name: APT | Updating the apt cache after adding the release repository
+    apt:
+      update_cache: yes
+
+  - name: COMMAND | Enable the Percona MySQL repository
+    command: "{{ percona_mysql_enable_repository }}"
+    when: percona_mysql_enable_repository is defined
+    changed_when: False
 
   - name: APT | Ensure MySQL Python libraries are installed.
     apt:
       name: "{{ percona_mysql_python_packages }}"
       state: present
 
-  - name: APT | Make sure percona mysql packages are installed
+  - name: APT | Install Percona MySQL packages
     apt:
       name: "{{ percona_mysql_packages }}"
       state: "{{ percona_mysql_packages_mode }}"
 
-  - name: APT | Make sure percona toolkit is installed (if configured)
-    apt:
-      name: "{{ percona_mysql_toolkit_package }}"
-      state: "{{ percona_mysql_packages_mode }}"
-
-  - name: SYSCTL | Set sysctl settings
+  - name: SYSCTL | Add settings for sysctl for the server
     sysctl:
       sysctl_set: yes
       reload: yes
@@ -69,5 +44,6 @@
       name: "{{ item.key }}"
       value: "{{ item.value }}"
     with_dict: "{{ percona_mysql_sysctl_settings }}"
+    when: percona_mysql_sysctl_settings is defined and percona_mysql_sysctl_settings != ''
 
   when: percona_mysql_enabled

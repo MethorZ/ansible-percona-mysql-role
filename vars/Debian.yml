@@ -1,39 +1,55 @@
 ---
-# Repository, keyserver and key id
-__percona_mysql_keyserver: hkp://keyserver.ubuntu.com:80
-__percona_mysql_key_id: 9334A25F8507EFA5
-__percona_mysql_repository: "deb http://repo.percona.com/apt {{ ansible_facts['distribution_release'] }} main"
-__percona_mysql8_repository: "https://repo.percona.com/apt/percona-release_latest.{{ ansible_facts['distribution_release'] }}_all.deb"
+##
+# Percona MySQL 8 Debian configuration
+##
 
-# Default Percona MySQL 5.X packages
-__percona_mysql_packages:
-  - "percona-server-server-{{ percona_mysql_version }}"
-  - libperconaserverclient20-dev
+##
+# Server setup
+##
+__percona_mysql_repository: "https://repo.percona.com/apt/percona-release_latest.generic_all.deb"
 
-__percona_mysql8_enable_repository: "percona-release setup ps80"
+# Additional dependencies
+__percona_mysql_package_dependencies:
+  - gnupg2
+  - lsb-release
+
+# Enable the percona mysql 8 repsitory
+__percona_mysql_8_enable_repository: "percona-release setup ps80"
 
 # Default Percona MySQL 8 packages
-__percona_mysql8_packages:
+__percona_mysql_8_packages:
   - percona-server-server
-  - libperconaserverclient21-dev
 
-# MySQL service / daemon
-__percona_mysql_service: mysql
-
-# Main config file
-__percona_mysql_config: /etc/mysql/percona-server.conf.d/mysqld.cnf
-__percona_mysql8_config: /etc/mysql/mysql.conf.d/mysqld.cnf
-
-# Adapt settings for 'max_open_files' and 'table_open_cache'
-__percona_mysql_systemd_service: /lib/systemd/system/mysql.service
-
-# Jemalloc packages
+##
+# Jemalloc variables
+##
 __percona_mysql_jemalloc1_package: libjemalloc1
 __percona_mysql_jemalloc1_path: /usr/lib/x86_64-linux-gnu/libjemalloc.so.1
 __percona_mysql_jemalloc2_package: libjemalloc2
 __percona_mysql_jemalloc2_path: /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
+__percona_mysql_jemalloc_sysconfig_dir: /etc/default
+__percona_mysql_jemalloc_sysconfig_file: /etc/default/mysql
 
-__percona_mysql_jemalloc_sysconfig: /etc/default/ansible.mysql
+# Used in order to add jemalloc implementation from sysconfic created
+__percona_mysql_systemd_service: /lib/systemd/system/mysql.service
 
-# Percona toolkit package
+##
+# Instance variables
+##
+
+# Main configuration file
+__percona_mysql_config: /etc/mysql/mysql.conf.d/mysqld.cnf
+__percona_mysql_safe_config: /etc/mysql/mysql.conf.d/mysqld_safe.cnf
+
+##
+# MySQL service
+##
+__percona_mysql_service: mysql
+
+# Required MySQL package on target server
+__percona_mysql_python_packages: python3-pymysql
+
+##
+# Percona toolkit
+##
 __percona_mysql_toolkit_package: percona-toolkit

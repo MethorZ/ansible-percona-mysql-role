@@ -1,0 +1,7 @@
+---
+##
+# Percona MySQL Daemon - safe - configuration
+##
+# Multi CPU / NUMA - Better distribution of Buffer Pool across multiple CPU's + reduces unnecessary swapping
+# Currently not tested
+percona_mysql_innodb_numa_interleave: 'OFF'

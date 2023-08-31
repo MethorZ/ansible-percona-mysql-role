@@ -1,5 +1,5 @@
 galaxy_info:
-  role_name: percona_mysql
+  role_name: methorz.percona_mysql
   author: MethorZ
   description: Ansible percona mysql support for Debian
   company: MethorZ

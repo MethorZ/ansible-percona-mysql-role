@@ -3,12 +3,13 @@
 # Configure the mysql root user
 ##
 - block:
-  - name: MYSQL_USER | Set provided MySQL root password
+  - name: MYSQL_USER | Set provided MySQL root password (overwrites)
     community.mysql.mysql_user:
       name: root
       password: "{{ percona_mysql_root_password }}"
       priv: "*.*:ALL,GRANT"
       login_user: root
+      login_password: "{{ percona_mysql_root_existing_password | default('') }}"
     when:
       - percona_mysql_root_password is defined
       - percona_mysql_root_password != ''
@@ -26,31 +27,21 @@
       community.mysql.mysql_user:
         name: root
         login_user: root
-        #login_password: ''
-        login_unix_socket: "{{ percona_mysql_socket }}"
+        login_password: "{{ percona_mysql_root_existing_password | default('') }}"
+        login_unix_socket: "{{ percona_mysql_config_socket }}"
         password: "{{ lookup('password', percona_mysql_password_file.path + ' length=15') }}"
         priv: "*.*:ALL,GRANT,BACKUP_ADMIN,SYSTEM_USER"
 
-    - name: SET_FACTS | Read generated password file for root my.cnf template
+    - name: SET_FACTS | Read generated password file for root
       set_fact:
         percona_mysql_root_password: "{{ lookup('file', percona_mysql_password_file.path) }}"
-
     when: (percona_mysql_root_password is not defined or percona_mysql_root_password == '') and
-          (not percona_mysql_root_my_cnf_exists or (percona_mysql_root_my_cnf_exists and percona_mysql_renew_existing_password))
+          (percona_mysql_root_existing_password is not defined or (percona_mysql_root_existing_password is defined and percona_mysql_renew_existing_password))
 
   - name: FACTS | Set current root password for MySQL
     set_fact:
       percona_mysql_root_password: "{{ percona_mysql_root_existing_password }}"
     when: (percona_mysql_root_password is not defined or percona_mysql_root_password == '') and percona_mysql_root_existing_password is defined
-
-  - name: MYSQL_USER | Create read-only MySQL user as default login user
-    community.mysql.mysql_user:
-      name: root-ro
-      password: "{{ percona_mysql_root_password }}"
-      priv: "*.*:SELECT"
-      login_user: root
-      login_password: "{{ percona_mysql_root_password }}"
-    when: percona_mysql_read_only_user_enabled
 
   - name: COPY | Create remote file with mysql root password
     copy:
@@ -61,6 +52,20 @@
       mode: 0600
     when: percona_mysql_create_root_passwd_file
 
+  - name: MYSQL_USER | Create read-only MySQL user as default login user
+    community.mysql.mysql_user:
+      name: "{{ percona_mysql_read_only_user }}"
+      password: "{{ percona_mysql_root_password }}"
+      priv: "*.*:SELECT"
+      login_user: root
+      login_password: "{{ percona_mysql_root_password }}"
+      login_unix_socket: "{{ percona_mysql_config_socket }}"
+    when:
+      - percona_mysql_read_only_user_enabled
+      - percona_mysql_read_only_user is defined
+      - percona_mysql_root_password is defined
+      - percona_mysql_root_password != ''
+
   - name: TEMPLATE | Create root .my.cnf from template
     template:
       src: "root.cnf.j2"
@@ -68,4 +73,5 @@
       owner: root
       group: root
       mode: 0600
+
   when: percona_mysql_enabled

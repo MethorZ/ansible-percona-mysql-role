@@ -3,122 +3,134 @@
 # Default OS specific variable definitions / defaults
 #
 - block:
+
+  ##
+  # Variables required for basic setup / installation
+  ##
   - name: INCLUDE_VARS | OS specific vars
     include_vars: "{{ ansible_facts['os_family'] }}.yml"
 
-  - name: FACTS - Define MySQL server 8 package
+  - name: FACTS - Define Percona MySQL version
     set_fact:
-      percona_mysql_packages: "{{ __percona_mysql8_packages | list }}"
-    when: percona_mysql_packages is not defined and percona_mysql_version == 8
-
-  - name: FACTS - Prepare command to enable percona server 8 repository
-    set_fact:
-      percona_enable_repository: "{{ __percona_mysql8_enable_repository }}"
-    when: percona_enable_repository is not defined and percona_mysql_version == 8
-
-  - name: FACTS - Define Percona MySQL 5 server package
-    set_fact:
-      percona_mysql_packages: "{{ __percona_mysql_packages | list }}"
-    when: percona_mysql_packages is not defined
-
-  - name: FACTS - Define Percona Toolkit package
-    set_fact:
-      percona_mysql_toolkit_package: "{{ __percona_mysql_toolkit_package }}"
-    when: percona_mysql_toolkit_package is not defined
-
-  - name: FACTS - Define Percona MySQL service / daemon
-    set_fact:
-      percona_mysql_service: "{{ __percona_mysql_service }}"
-    when: percona_mysql_service is not defined
-
-  - name: FACTS - Define Percona MySQL systemd service
-    set_fact:
-      percona_mysql_systemd_service: "{{ __percona_mysql_systemd_service }}"
-    when: percona_mysql_systemd_service is not defined
-
-  - name: FACTS - Define keyserver for Percona MySQL
-    set_fact:
-      percona_mysql_keyserver: "{{ __percona_mysql_keyserver }}"
-    when: percona_mysql_keyserver is not defined
-
-  - name: FACTS - Define key id for Percona MySQL
-    set_fact:
-      percona_mysql_key_id: "{{ __percona_mysql_key_id }}"
-    when: percona_mysql_key_id is not defined
+      percona_mysql_version_abs: "{{ percona_mysql_version | int | abs }}"
+    when: percona_mysql_version_abs is not defined
 
   - name: FACTS - Define repository for Percona MySQL
     set_fact:
       percona_mysql_repository: "{{ __percona_mysql_repository }}"
     when: percona_mysql_repository is not defined
 
-  - name: FACTS - Define repository for Percona MySQL 8
+  - name: FACTS - Define package dependencies for Percona MySQL
     set_fact:
-      percona_mysql8_repository: "{{ __percona_mysql8_repository }}"
-    when: percona_mysql8_repository is not defined
+      percona_mysql_package_dependencies: "{{ __percona_mysql_package_dependencies | list }}"
+    when: percona_mysql_package_dependencies is not defined
 
-  - name: FACTS - Define Percona MySQL 8 main conf file
+  - name: FACTS - Define command to enable Percona MySQL 8 repository
     set_fact:
-      percona_mysql_config: "{{ __percona_mysql8_config }}"
-    when: percona_mysql_config is not defined and percona_mysql_version == 8
+      percona_mysql_enable_repository: "{{ __percona_mysql_8_enable_repository }}"
+    when: percona_mysql_enable_repository is not defined and percona_mysql_version_abs == "8"
 
-  - name: FACTS - Define Percona MySQL 5 main conf file
+  - name: FACTS - Define Percona MySQL 8 packages
     set_fact:
-      percona_mysql_config: "{{ __percona_mysql_config }}"
-    when: percona_mysql_config is not defined
+      percona_mysql_packages: "{{ __percona_mysql_8_packages | list }}"
+    when: percona_mysql_packages is not defined and percona_mysql_version_abs == "8"
 
-  - name: FACTS - Define jemalloc package (for buster)
+  - name: FACTS - Define Percona MySQL service / daemon
+    set_fact:
+      percona_mysql_service: "{{ __percona_mysql_service }}"
+    when: percona_mysql_service is not defined
+
+  - name: SET_FACT | Determine required MySQL Python libraries.
+    set_fact:
+      percona_mysql_python_packages: "{{ __percona_mysql_python_packages }}"
+    when: percona_mysql_python_packages is not defined
+
+  ##
+  # Jemalloc variables
+  ##
+  - name: FACTS - Define jemalloc package (for buster and newer)
     set_fact:
       percona_mysql_jemalloc_package: "{{ __percona_mysql_jemalloc2_package }}"
       percona_mysql_jemalloc_path: "{{ __percona_mysql_jemalloc2_path }}"
-    when: percona_mysql_jemalloc_package is not defined and (ansible_facts['distribution_release'] == 'buster' or ansible_facts['distribution_release'] == 'bullseye')
+    when: percona_mysql_jemalloc_package is not defined and ansible_facts['distribution_major_version']|int >= 10
 
   - name: FACTS - Define jemalloc package (for older than buster)
     set_fact:
       percona_mysql_jemalloc_package: "{{ __percona_mysql_jemalloc1_package }}"
       percona_mysql_jemalloc_path: "{{ __percona_mysql_jemalloc1_path }}"
-    when: percona_mysql_jemalloc_package is not defined
+    when: percona_mysql_jemalloc_package is not defined and ansible_facts['distribution_major_version']|int < 10
 
-  - name: FACTS - Define defaults sysconfig path
+  - name: FACTS - Define sysconfig directory path for jemalloc settings
     set_fact:
-      percona_mysql_jemalloc_sysconfig: "{{ __percona_mysql_jemalloc_sysconfig }}"
-    when: percona_mysql_jemalloc_sysconfig is not defined
+      percona_mysql_jemalloc_sysconfig_dir: "{{ __percona_mysql_jemalloc_sysconfig_dir }}"
+    when: percona_mysql_jemalloc_sysconfig_dir is not defined
 
-  - name: FACTS - Define default user for root my.cnf
+  - name: FACTS - Define sysconfig file path for jemalloc settings
     set_fact:
-      percona_mysql_read_only_user: root
-    when: percona_mysql_read_only_user is not defined or percona_mysql_read_only_user == ''
+      percona_mysql_jemalloc_sysconfig_file: "{{ __percona_mysql_jemalloc_sysconfig_file }}"
+    when: percona_mysql_jemalloc_sysconfig_file is not defined
 
-  - name: FACTS - Define mysql binlog file path
+  - name: FACTS - Define Percona MySQL systemd service
     set_fact:
-      percona_mysql_log_bin: "{{ percona_mysql_binary_log_dir }}/{{ percona_mysql_binary_log_file }}"
-    when: percona_mysql_log_bin is not defined
+      percona_mysql_systemd_service: "{{ __percona_mysql_systemd_service }}"
+    when: percona_mysql_systemd_service is not defined
 
+  ##
+  # Percona MySQL Instance variables
+  ##
+  - name: FACTS - Define Percona MySQL main configuration file
+    set_fact:
+      percona_mysql_config: "{{ __percona_mysql_config }}"
+    when: percona_mysql_config is not defined
+
+  - name: FACTS - Define Percona MySQL main safe configuration file
+    set_fact:
+      percona_mysql_safe_config: "{{ __percona_mysql_safe_config }}"
+    when: percona_mysql_safe_config is not defined
+
+  ##
+  # Variables required for Percona Toolkit
+  ##
+  - name: FACTS - Define Percona Toolkit package
+    set_fact:
+      percona_mysql_toolkit_package: "{{ __percona_mysql_toolkit_package }}"
+    when: percona_mysql_toolkit_package is not defined
+
+  ##
+  # Discover existing MySQL password
+  ##
   - name: BLOCK | Attempt to discover existing root password
     block:
 
-    - name: STAT | Check existence of root my.cnf
-      stat:
-        path: "{{ percona_mysql_root_my_cnf_file }}"
-      register: percona_mysql_existing_my_cnf_file
+      - name: STAT | Check existence of root password file
+        stat:
+          path: "{{ percona_mysql_root_passwd_file }}"
+        register: percona_mysql_existing_passwd_file
+        check_mode: no
 
-    - name: SET_FACTS | Define existence of my.cnf file
-      set_fact:
-        percona_mysql_root_my_cnf_exists: "{{ percona_mysql_existing_my_cnf_file.stat.exists }}"
+      - name: SET_FACTS | Define existence of password file
+        set_fact:
+          percona_mysql_existing_passwd_file_exists: "{{ percona_mysql_existing_passwd_file.stat.exists }}"
+        check_mode: no
 
-    - name: FETCH | Fetch remote root my.cnf
-      fetch:
-        src: "{{ percona_mysql_existing_my_cnf_file.stat.path }}"
-        dest: "{{ percona_mysql_local_temp_dir }}/ansible_fetched_my.cnf.{{ inventory_hostname }}"
-        flat: yes
-      when: percona_mysql_existing_my_cnf_file.stat.exists
+      - name: FETCH | Fetch remote root password file
+        fetch:
+          src: "{{ percona_mysql_existing_passwd_file.stat.path }}"
+          dest: "{{ percona_mysql_local_temp_dir }}/ansible_fetched_root_pwd.{{ inventory_hostname }}"
+          flat: yes
+        when: percona_mysql_existing_passwd_file_exists
+        check_mode: no
 
-    - name: SET_FACTS | Read generated password file for root my.cnf template
-      set_fact:
-        percona_mysql_root_existing_password: "{{ lookup('ini', 'password section=client file=' + percona_mysql_local_temp_dir +'/ansible_fetched_my.cnf.' + inventory_hostname) }}"
-      when: percona_mysql_existing_my_cnf_file.stat.exists
+      - name: SET_FACTS | Read generated password file for root
+        set_fact:
+          percona_mysql_root_existing_password: "{{ lookup('file', percona_mysql_local_temp_dir + '/ansible_fetched_root_pwd.' + inventory_hostname) }}"
+        when: percona_mysql_existing_passwd_file_exists
+        check_mode: no
 
-    - name: FILE | Remove fetched file after use
-      file:
-        path: "{{ percona_mysql_local_temp_dir }}/ansible_fetched_my.cnf.{{ inventory_hostname }}"
-        state: absent
+      - name: FILE | Remove fetched file after use
+        file:
+          path: "{{ percona_mysql_local_temp_dir }}/ansible_fetched_root_pwd.{{ inventory_hostname }}"
+          state: absent
+        check_mode: no
+
   when: percona_mysql_enabled

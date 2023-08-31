@@ -1,6 +1,6 @@
 ---
 ##
-# Setup Percona MySQL database
+# Set up Percona MySQL database
 ##
 
 ##
@@ -10,7 +10,7 @@
   import_tasks: setup-variables.yml
 
 ##
-# Setup the OS based on family
+# Set up the OS based on family
 ##
 - name: IMPORT_TASKS | Setup percona mysql for OS
   import_tasks: "setup-Debian.yml"
@@ -19,6 +19,11 @@
 
 - name: IMPORT_TASKS | Setup jemalloc
   import_tasks: "setup-jemalloc.yml"
+  when:
+    - ansible_facts['os_family'] == 'Debian'
+
+- name: IMPORT_TASKS | Setup Percona Toolkit
+  import_tasks: "setup-toolkit.yml"
   when:
     - ansible_facts['os_family'] == 'Debian'
 

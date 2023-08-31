@@ -1,6 +1,6 @@
 ---
 #
-# Setup all required packages
+# Setup jemalloc and transparent huge pages
 #
 - block:
   - name: APT | Make sure jemalloc package is installed (if configured)
@@ -17,20 +17,19 @@
       group: root
       mode: 0644
 
-  - name: TEMPLATE | Apply jemalloc sysconfig mysql template
-    template:
-      src: "sysconfig.mysql.j2"
-      dest: "{{ percona_mysql_jemalloc_sysconfig }}"
-      owner: root
-      group: root
-      mode: 0644
-    notify: restart mysql
+  - name: LINEINFILE | Add the LD_PRELOAD for jemalloc
+    lineinfile:
+      path: "{{ percona_mysql_jemalloc_sysconfig_file }}"
+      regexp: '^LD_PRELOAD='
+      line: "LD_PRELOAD={{ percona_mysql_jemalloc_path }}"
+    notify:
+      - restart mysql
 
   - name: LINEINFILE | Switch to malloc implementation
     lineinfile:
       path: "{{ percona_mysql_systemd_service }}"
       regexp: '^EnvironmentFile='
-      line: "EnvironmentFile={{ percona_mysql_jemalloc_sysconfig }}"
+      line: "EnvironmentFile={{ percona_mysql_jemalloc_sysconfig_file }}"
     notify:
       - daemon reload
       - restart mysql

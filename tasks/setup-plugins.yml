@@ -12,9 +12,24 @@
       group: root
       mode: 0644
     with_items: "{{ percona_mysql_plugins }}"
+    register: percona_mysql_plugins_installed_result
     notify: restart mysql
-
   when:
     - percona_mysql_enabled
 
-
+- name: MYSQL_QUERY | Execute the queries to apply the plugins
+  mysql_query:
+    login_db: mysql
+    login_user: root
+    login_password: "{{ percona_mysql_root_password }}"
+    login_unix_socket: "{{ percona_mysql_config_socket }}"
+    query:
+      - CREATE FUNCTION lib_mysqludf_preg_info RETURNS STRING SONAME 'lib_mysqludf_preg.so'
+      - CREATE FUNCTION preg_capture RETURNS STRING SONAME 'lib_mysqludf_preg.so'
+      - CREATE FUNCTION preg_check RETURNS INTEGER SONAME 'lib_mysqludf_preg.so'
+      - CREATE FUNCTION preg_replace RETURNS STRING SONAME 'lib_mysqludf_preg.so'
+      - CREATE FUNCTION preg_rlike RETURNS INTEGER SONAME 'lib_mysqludf_preg.so'
+      - CREATE FUNCTION preg_position RETURNS INTEGER SONAME 'lib_mysqludf_preg.so'
+  when:
+    - percona_mysql_enabled
+    - percona_mysql_plugins_installed_result.changed

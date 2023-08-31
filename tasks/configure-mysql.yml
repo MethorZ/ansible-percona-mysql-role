@@ -1,12 +1,7 @@
 ---
 ##
-# Configure the
+# Configure the Percona MySQL instance
 ##
-
-#- name: SERVICE | Stop MySQL before applying configuration
-#  service:
-#    name: "{{ percona_mysql_service }}"
-#    state: stopped
 - block:
   - name: LINEINFILE | Set LimitNOFILE to infinity (Fixes changed limits warning in log)
     lineinfile:
@@ -30,6 +25,15 @@
     template:
       src: "mysqld.cnf.j2"
       dest: "{{ percona_mysql_config }}"
+      owner: root
+      group: root
+      mode: 0644
+    notify: restart mysql
+
+  - name: TEMPLATE | Apply mysqld_safe.cnf template
+    template:
+      src: "mysqld_safe.cnf.j2"
+      dest: "{{ percona_mysql_safe_config }}"
       owner: root
       group: root
       mode: 0644
