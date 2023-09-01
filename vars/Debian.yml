@@ -13,7 +13,7 @@ __percona_mysql_package_dependencies:
   - gnupg2
   - lsb-release
 
-# Enable the percona mysql 8 repsitory
+# Enable the percona mysql 8 repository
 __percona_mysql_8_enable_repository: "percona-release setup ps80"
 
 # Default Percona MySQL 8 packages
