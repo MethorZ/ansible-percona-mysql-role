@@ -41,7 +41,7 @@ bind-address = {{ percona_mysql_config_bind_address }}
 {% if percona_mysql_config_use_explicit_defaults_for_timestamp %}
 explicit_defaults_for_timestamp
 {% endif %}
-sql_mode = {{ percona_mysql_config_sql_mode }}
+sql_mode = '{{ percona_mysql_config_sql_mode }}'
 
 ##
 # Safety configuration
@@ -107,7 +107,7 @@ sync_binlog = {{ percona_mysql_config_sync_binlog }}
 sync_relay_log = {{ percona_mysql_config_sync_relay_log }}
 sync_source_info = {{ percona_mysql_config_sync_source_info }}
 sync_relay_log_info = {{ percona_mysql_config_sync_relay_log_info }}
-relay_log_recovery: {{ percona_mysql_config_relay_log_recovery }}
+relay_log_recovery =  {{ percona_mysql_config_relay_log_recovery }}
 {% endif %}
 
 {% for ignore_db in percona_mysql_config_replicate_ignore_db %}
@@ -124,9 +124,9 @@ innodb_data_file_path = {{ percona_mysql_config_innodb_data_file_path }}
 {% endif %}
 
 # Buffer pool configuration
-innodb_buffer_pool_chunk_size = {{ percona_mysql_config_innodb_buffer_chunk_size }}
+innodb_buffer_pool_chunk_size = {{ percona_mysql_config_innodb_buffer_chunk_size }}{{ percona_mysql_config_innodb_buffer_pool_unit }}
 innodb_buffer_pool_instances = {{ percona_mysql_config_innodb_buffer_pool_instances }}
-innodb_buffer_pool_size = {{ percona_mysql_config_innodb_buffer_pool_size }}
+innodb_buffer_pool_size = {{ percona_mysql_config_innodb_buffer_pool_size }}{{ percona_mysql_config_innodb_buffer_pool_unit }}
 innodb_lru_scan_depth = {{ percona_mysql_config_innodb_lru_scan_depth }}
 
 # Transaction log configuration

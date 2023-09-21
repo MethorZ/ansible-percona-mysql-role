@@ -105,6 +105,7 @@ percona_mysql_config_relay_log_recovery: 'ON'
 percona_mysql_config_innodb_file_per_table: 'ON'
 
 # Buffer pool settings
+percona_mysql_config_innodb_buffer_pool_unit: 'M' # G = Gigabytes, M = Megabytes
 percona_mysql_config_innodb_buffer_pool_size: 4G # 80 %
 percona_mysql_config_innodb_buffer_pool_instances: 8
 percona_mysql_config_innodb_lru_scan_depth: 1024
